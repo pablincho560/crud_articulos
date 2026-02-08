@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Artículos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Corrección para evitar que los resúmenes largos estiren la tabla */
+        .resumen-cell {
+            max-width: 300px; 
+            white-space: normal; 
+            word-wrap: break-word; 
+        }
+    </style>
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4 text-primary">📚 Artículos</h1>
+
+    <!-- Buscador -->
+    <form class="d-flex mb-3" th:action="@{/buscar}" method="get">
+        <input id="queryInput" class="form-control me-2" type="text" name="query"
+               placeholder="Buscar por título, autor, revista, resumen, palabras clave o año...">
+        <button class="btn btn-primary me-2" type="submit">Buscar</button>
+        <a class="btn btn-secondary" th:href="@{/}">Reestablecer</a>
+    </form>
+
+    <!-- Botones para operadores lógicos -->
+    <div class="mb-3">
+        <button type="button" class="btn btn-outline-dark me-2" onclick="addOperator(' AND ')">AND</button>
+        <button type="button" class="btn btn-outline-dark me-2" onclick="addOperator(' OR ')">OR</button>
+        <button type="button" class="btn btn-outline-dark me-2" onclick="addOperator(' XOR ')">XOR</button>
+        <button type="button" class="btn btn-outline-dark me-2" onclick="addOperator('(')"> ( </button>
+        <button type="button" class="btn btn-outline-dark me-2" onclick="addOperator(')')"> ) </button>
+    </div>
+
+    <a class="btn btn-success mb-3" th:href="@{/nuevo}">➕ Nuevo Artículo</a>
+
+    <table class="table table-hover table-bordered shadow">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Autores</th>
+                <th>Año</th>
+                <th>Revista</th>
+                <th>Resumen</th>
+                <th>Palabras Clave</th>
+                <th>Archivo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="articulo : ${articulos}">
+                <td th:text="${articulo.id}"></td>
+                <td th:text="${articulo.titulo}"></td>
+                <td th:text="${articulo.autores}"></td>
+                <td th:text="${articulo.anio}"></td>
+                <td th:text="${articulo.revista}"></td>
+                
+                <!-- Corrección aquí -->
+                <td class="resumen-cell" 
+                    th:text="${#strings.abbreviate(articulo.resumen, 150)}"></td>
+                
+                <td th:text="${articulo.palabrasClave}"></td>
+                <td>
+                    <a th:if="${articulo.archivoPdf != null}"
+                       th:href="@{/descargar/{id}(id=${articulo.id})}"
+                       target="_blank" class="btn btn-outline-primary btn-sm">📄 Ver PDF</a>
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-sm" th:href="@{/editar/{id}(id=${articulo.id})}">✏️ Editar</a>
+                    <a class="btn btn-danger btn-sm" th:href="@{/eliminar/{id}(id=${articulo.id})}">🗑️ Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function addOperator(operator) {
+            const input = document.getElementById("queryInput");
+            input.value += operator;
+            input.focus();
+        }
+    </script>
+</body>
+</html>
