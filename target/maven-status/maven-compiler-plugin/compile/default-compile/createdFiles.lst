@@ -1,4 +1,0 @@
-com\pablo\crud_articulos\CrudArticulosApplication.class
-com\pablo\crud_articulos\repository\ArticuloRepository.class
-com\pablo\crud_articulos\controller\ArticuloController.class
-com\pablo\crud_articulos\model\Articulo.class
